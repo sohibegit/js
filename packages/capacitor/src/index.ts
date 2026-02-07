@@ -195,6 +195,8 @@ export default class CapacitorLogtoClient extends LogtoBaseClient {
   async signOut(postLogoutRedirectUri?: string): Promise<void> {
     return new Promise((resolve) => {
       const run = async () => {
+        // Ensure 'this' context is preserved by binding super.signOut to this instance
+        const superSignOut = super.signOut.bind(this);
         const [handle] = await Promise.all([
           postLogoutRedirectUri
             ? App.addListener('appUrlOpen', async ({ url }) => {
@@ -208,7 +210,7 @@ export default class CapacitorLogtoClient extends LogtoBaseClient {
                 await handle.remove();
                 resolve();
               }),
-          super.signOut(postLogoutRedirectUri),
+          superSignOut(postLogoutRedirectUri),
         ]);
       };
 
